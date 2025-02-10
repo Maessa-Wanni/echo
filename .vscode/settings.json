@@ -1,0 +1,56 @@
+{
+  "mypy.runUsingActiveInterpreter": true,
+  "python.defaultInterpreterPath": "./server/.venv/bin/python",
+  "mypy.targets": ["./server/dembrane"],
+  "mypy.configFile": "./server/pyproject.toml",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.useTabStops": true,
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.tabSize": 4
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.useTabStops": true,
+    "editor.tabSize": 4
+  },
+  "restoreTerminals.runOnStartup": false,
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "server",
+          "commands": ["cd server", "source .venv/bin/activate", "./run.sh"]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "workers",
+          "commands": [
+            "cd server",
+            "source .venv/bin/activate",
+            "./run-worker.sh"
+          ]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "admin-dashboard",
+          "commands": ["cd frontend", "pnpm run dev"]
+        },
+        {
+          "name": "participant-portal",
+          "commands": ["cd frontend", "pnpm run participant:dev"]
+        }
+      ]
+    }
+  ],
+  "files.eol": "\n",
+  "debug.internalConsoleOptions": "neverOpen"
+}
