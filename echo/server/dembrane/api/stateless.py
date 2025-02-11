@@ -17,6 +17,7 @@ StatelessRouter = APIRouter(tags=["stateless"])
 class TranscriptRequest(BaseModel):
     system_prompt: str | None = None
     transcript: str
+    language: str | None = None
 
 
 class TranscriptResponse(BaseModel):
@@ -33,35 +34,13 @@ async def summarize_conversation_transcript(
     transcript = body.transcript
 
     # Generate a summary from the transcript (placeholder logic)
-    summary = await generate_summary(transcript, system_prompt)
+    summary = generate_summary(transcript, system_prompt, body.language)
 
     # Return the full transcript as a single string
     return TranscriptResponse(summary=summary)
 
 
-def raise_if_conversation_not_found_or_not_authorized(
-    conversation_id: str, auth: DependencyDirectusSession
-) -> None:
-    conversation = directus.get_items(
-        "conversation",
-        {
-            "query": {
-                "filter": {"id": {"_eq": conversation_id}},
-                "fields": ["project_id.directus_user_id"],
-            }
-        },
-    )
-
-    if conversation is None:
-        raise HTTPException(status_code=404, detail="Conversation not found")
-
-    if not auth.is_admin and conversation[0]["project_id"]["directus_user_id"] != auth.user_id:
-        raise HTTPException(
-            status_code=403, detail="You are not authorized to access this conversation"
-        )
-
-
-async def generate_summary(transcript: str, system_prompt: str | None) -> str:
+def generate_summary(transcript: str, system_prompt: str | None, language: str | None) -> str:
     """
     Generate a summary of the transcript using LangChain and a custom API endpoint.
 
@@ -73,9 +52,9 @@ async def generate_summary(transcript: str, system_prompt: str | None) -> str:
         str: The generated summary.
     """
     # Prepare the prompt template
-    base_prompt = "You are a helpful assistant. Please summarize the following transcript."
+    base_prompt = f"You are a helpful assistant. Please provide a summary of the following transcript. Only return the summary itself, do not include any other text. Focus on the most important points of the text. The language of the summary must be in {language}."
     if system_prompt:
-        base_prompt += f"\nContext: {system_prompt}"
+        base_prompt += f"\nContext (ignore if None): {system_prompt}"
 
     prompt_template = ChatPromptTemplate.from_messages(
         [HumanMessagePromptTemplate.from_template(f"{base_prompt}\n\n{{transcript}}")]

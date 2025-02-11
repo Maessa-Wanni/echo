@@ -12,6 +12,13 @@ class TranscriptionError(Exception):
     pass
 
 
+def transcribe_audio_litellm(
+    audio_file_path: str, language: Optional[str], whisper_prompt: Optional[str]
+) -> str:
+    return ""
+
+
+
 def transcribe_audio_openai(
     audio_file_path: str, language: Optional[str], whisper_prompt: Optional[str]
 ) -> str:

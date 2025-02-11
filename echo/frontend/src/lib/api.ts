@@ -541,3 +541,9 @@ export const createProjectReport = async (payload: {
 
   return response;
 };
+
+export const finishConversation = async (conversationId: string) => {
+  return apiNoAuth.post<unknown>(
+    `/participant/conversations/${conversationId}/finish`,
+  );
+};

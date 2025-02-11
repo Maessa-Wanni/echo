@@ -33,6 +33,7 @@ from dembrane.quote_utils import (
     generate_conversation_summary,
     cluster_quotes_using_aspect_centroids,
 )
+from dembrane.api.stateless import generate_summary
 
 logger = get_task_logger("celery_tasks")
 
@@ -722,3 +723,48 @@ def task_create_project_library(_self, project_id: str, language: str):
             logger.error(f"Error: {e}")
             db.rollback()
             raise
+
+
+@celery_app.task(bind=True, retry_backoff=True, ignore_result=False, base=BaseTask)
+def task_finish_conversation_hook(self, conversation_id: str):
+    try:
+        conversation_data = directus.get_items(
+            "conversation",
+            {
+                "query": {
+                    "filter": {
+                        "id": {"_eq": conversation_id},
+                    },
+                    "fields": ["id", "chunks.transcript", "project_id.language"],
+                    "deep": {
+                        "chunks": {"_sort": ["timestamp"], "_limit": "120"},
+                    },
+                },
+            },
+        )
+
+        if not conversation_data or len(conversation_data) == 0:
+            raise Exception("Conversation not found")
+
+        conversation_data = conversation_data[0]
+
+        language = conversation_data["project_id"]["language"]
+
+        transcript_str = ""
+
+        for chunk in conversation_data["chunks"]:
+            transcript_str += chunk["transcript"]
+
+        summary = generate_summary(transcript_str, None, language if language else "nl")
+
+        directus.update_item(
+            collection_name="conversation",
+            item_id=conversation_id,
+            item_data={
+                "summary": summary,
+            },
+        )
+
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        raise self.retry(exc=e) from e
