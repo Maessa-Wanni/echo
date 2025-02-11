@@ -128,7 +128,7 @@ export const ConversationEdit = ({
             }
             {...register("participant_name")}
           />
-
+          {/* 
           {projectTags && projectTags.length > 0 ? (
             <Controller
               name="tagIdList"
@@ -172,7 +172,7 @@ export const ConversationEdit = ({
                 <Trans>No tags found</Trans>
               </Text>
             </>
-          )}
+          )} */}
         </Stack>
       </form>
     </Stack>

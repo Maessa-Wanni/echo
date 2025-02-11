@@ -108,6 +108,10 @@ export const ChatAccordion = ({ projectId }: { projectId: string }) => {
     },
   });
 
+  if (chatsQuery.data?.length === 0) {
+    return null;
+  }
+
   return (
     <Accordion.Item value="chat">
       <Accordion.Control>

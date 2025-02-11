@@ -53,6 +53,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   api,
   deleteParticipantConversationChunk,
+  finishConversation,
   getParticipantConversationChunks,
 } from "@/lib/api";
 import { useParticipantProjectById } from "@/lib/participantQuery";
@@ -879,8 +880,9 @@ export const ParticipantConversationAudioRoute = () => {
   const textModeUrl = `/${projectId}/conversation/${conversationId}/text`;
   const finishUrl = `/${projectId}/conversation/${conversationId}/finish`;
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (window.confirm(t`Are you sure you want to finish?`)) {
+      await finishConversation(conversationId ?? "");
       navigate(finishUrl);
     }
   };

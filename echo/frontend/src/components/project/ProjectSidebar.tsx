@@ -103,7 +103,7 @@ export const ProjectSidebar = () => {
         <Trans>Ask</Trans>
       </NavigationButton>
 
-      <NavigationButton
+      {/* <NavigationButton
         to={`/projects/${projectId}/library`}
         component="a"
         rightIcon={<Icons.LightBulb />}
@@ -112,7 +112,7 @@ export const ProjectSidebar = () => {
         <Trans>Library</Trans>
       </NavigationButton>
 
-      <ReportModalNavigationButton />
+      <ReportModalNavigationButton />  */}
 
       <Box hiddenFrom="lg">
         <ProjectQRCode project={projectQuery.data} />

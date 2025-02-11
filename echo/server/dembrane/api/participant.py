@@ -6,8 +6,9 @@ from datetime import datetime
 from fastapi import Form, APIRouter, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.orm import joinedload
+from fastapi.exceptions import HTTPException
 
-from dembrane.tasks import task_process_conversation_chunk
+from dembrane.tasks import task_finish_conversation_hook, task_process_conversation_chunk
 from dembrane.utils import generate_uuid
 from dembrane.config import AUDIO_CHUNKS_DIR
 from dembrane.schemas import (
@@ -22,6 +23,7 @@ from dembrane.database import (
     DependencyInjectDatabase,
 )
 from dembrane.directus import directus
+from dembrane.api.stateless import generate_summary
 from dembrane.api.exceptions import (
     ProjectNotFoundException,
     ConversationNotFoundException,
@@ -335,3 +337,13 @@ async def upload_conversation_chunk(
     task_process_conversation_chunk.delay(chunk_created["id"])
 
     return [chunk_created]
+
+
+@ParticipantRouter.post(
+    "/conversations/{conversation_id}/finish",
+)
+async def run_when_conversation_is_finished(
+    conversation_id: str,
+) -> str:
+    task_finish_conversation_hook.delay(conversation_id)
+    return "OK"

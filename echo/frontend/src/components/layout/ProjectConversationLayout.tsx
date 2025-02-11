@@ -24,7 +24,7 @@ export const ProjectConversationLayout = () => {
         tabs={[
           { value: "overview", label: t`Overview` },
           { value: "transcript", label: t`Transcript` },
-          { value: "analysis", label: t`Analysis` },
+          // { value: "analysis", label: t`Analysis` },
         ]}
         loading={false}
       />
