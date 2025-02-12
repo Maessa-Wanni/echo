@@ -4,10 +4,6 @@ from fastapi import APIRouter
 from litellm import completion
 from pydantic import BaseModel
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
-from fastapi.exceptions import HTTPException
-
-from dembrane.directus import directus
-from dembrane.api.dependency_auth import DependencyDirectusSession
 
 logger = getLogger("api.stateless")
 
@@ -68,7 +64,7 @@ def generate_summary(transcript: str, system_prompt: str | None, language: str |
                 "role": "user",
             }
         ],
-        api_base="http://host.docker.internal:8080",
+        api_base="https://llm-demo.ai-hackathon.haven.vng.cloud",
     )
 
     response_content = response["choices"][0]["message"]["content"]
