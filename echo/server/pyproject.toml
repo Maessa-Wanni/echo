@@ -8,6 +8,11 @@ dependencies = [
     "fastapi==0.109.*",
     "uvicorn[standard]==0.27.*",
     "python-multipart==0.0.*",
+    "flair>=0.15.1",
+    "pyannote-audio>=3.3.1",
+    "langdetect",
+    "transformers",
+    "rake-nltk",
     "celery[redis]>=5.4.0",
     # Langchain
     "langchain==0.1.*",

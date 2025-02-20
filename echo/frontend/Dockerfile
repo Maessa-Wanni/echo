@@ -37,4 +37,9 @@ RUN npm install -g --force serve
 
 COPY --from=builder /code/dist /app
 
-CMD ["serve", "-p", "5173", "--single"]
+EXPOSE 5173
+
+#CMD ["serve", "-s", "-l", "0.0.0.0:5173"]
+
+CMD ["serve", "-s", "-l", "tcp://0.0.0.0:5173", "--single"]
+# CMD ["serve", "-p", "5173", "--single"]
